@@ -139,7 +139,7 @@ export default function AddCredit({ user }) {
         </div>
 
         <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-purple-50 to-white">
-          <div className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
+          <div className="max-w-7xl -mt-24 mx-auto px-4 py-16 sm:px-6 lg:px-8">
             {/* Plan Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
               {plans.map((plan) => (
@@ -221,18 +221,13 @@ export default function AddCredit({ user }) {
             </div>
             <div className="mt-8 flex items-center justify-center">
               <ShieldCheck className="w-6 h-6 text-green-500 mr-2" />
-              <p className="text-gray-600 text-base">100% Secure payment processing</p>
+              <p className="text-gray-600 text-base">
+                100% Secure payment processing
+              </p>
             </div>
             {/* Secure Payment Section */}
             <div className="mt-8 max-w-2xl mx-auto text-center">
-              <div className="flex items-center justify-center gap-2 mb-6">
-                <Shield className="w-5 h-5 text-green-500" />
-                <span className="text-gray-600 text-sm sm:text-base">
-                  Secure payment processing
-                </span>
-              </div>
-
-              <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm">
+              <div className=" p-4 sm:p-6 rounded-lg shadow-sm">
                 <div className="flex items-center justify-center mb-4">
                   <CreditCard className="w-5 h-5 text-gray-400 mr-2" />
                   <h3 className="text-base sm:text-lg font-medium text-gray-900">
