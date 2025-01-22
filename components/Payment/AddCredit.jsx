@@ -1,14 +1,14 @@
 "use client";
 import React, { useState } from "react";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
-import { checkEnvironment } from "@/lib/checkenvironment";
-import { AiOutlineLoading } from "react-icons/ai";
 import Link from "next/link";
-import { Slash } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { AiOutlineLoading } from "react-icons/ai";
 import { Dosis } from "next/font/google";
-const dosis_sans = Dosis({ weight: "700", subsets: ["latin"] });
 import PayMethods from "@/components/Payment/PayMethods";
+import { checkEnvironment } from "@/lib/checkenvironment";
+
+const dosis_sans = Dosis({ weight: "700", subsets: ["latin"] });
 
 const offers = [
   {
