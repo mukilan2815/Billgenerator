@@ -12,6 +12,9 @@ export default function BillsType() {
     "bg-indigo-500/5",
     "bg-sky-500/5",
     "bg-lime-500/5",
+    "bg-rose-500/5",
+    "bg-cyan-500/5",
+    "bg-violet-500/5",
   ];
 
   return (
@@ -26,7 +29,7 @@ export default function BillsType() {
           return (
             <li
               key={i}
-              className={`${colors[i]} flex  space-x-5 items-center rounded-xl p-5`}
+              className={`${colors[i]} flex space-x-5 items-center rounded-xl p-5 transform transition-transform duration-300 hover:scale-105`}
             >
               <span className=" text-5xl">
                 <e.icon />
