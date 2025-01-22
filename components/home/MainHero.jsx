@@ -62,7 +62,7 @@ export default function MainHero({ session }) {
             {!session && (
               <Link
                 href={"/sign-in"}
-                className=" transition-all ring-1 bg-red-500 ring-slate-800 italic  px-10 rounded-3xl py-2  text-lg flex items-center gap-2 hover:bg-yellow-200 w-fit"
+                className=" transition-all ring-1 bg-red-500 ring-slate-800 italic  px-10 rounded-3xl py-2  text-lg flex items-center gap-2 hover:bg-red-800 w-fit"
               >
                 Join and get 10 Credits Free <BsArrowRight />
               </Link>

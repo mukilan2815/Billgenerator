@@ -219,11 +219,9 @@ export default function AddCredit({ user }) {
                 </button>
               )}
             </div>
-            <div className="mt-8 text-center">
-              <ShieldCheck className="w-6 h-6 text-green-500 mx-auto" />
-              <p>
-                100% satisfaction guaranteed. Secure payment methods available
-              </p>
+            <div className="mt-8 flex items-center justify-center">
+              <ShieldCheck className="w-6 h-6 text-green-500 mr-2" />
+              <p className="text-gray-600 text-base">100% Secure payment processing</p>
             </div>
             {/* Secure Payment Section */}
             <div className="mt-8 max-w-2xl mx-auto text-center">
