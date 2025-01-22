@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Shield, Clock, Users, Star, CreditCard } from "lucide-react";
+import { Shield, Clock, Star, CreditCard, ShieldCheck } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import PayMethods from "@/components/Payment/PayMethods";
 
@@ -49,6 +49,7 @@ export default function AddCredit({ user }) {
   const [payment_info, setPayment_info] = useState(
     plans.find((plan) => plan.id === "premium")
   );
+  const [agreed, setAgreed] = useState(false);
 
   const handlePlanChange = (planId) => {
     setSelectedPlan(planId);
@@ -194,13 +195,16 @@ export default function AddCredit({ user }) {
                 </Card>
               ))}
             </div>
-
-            {/* Plan Selection and Buy Button */}
             <div className="flex flex-col items-center">
               <div className="mt-4">
                 <label className="flex items-center justify-center">
-                  <input type="checkbox" className="mr-2" />I agree with Terms
-                  and Conditions
+                  <input
+                    type="checkbox"
+                    className="mr-2"
+                    checked={agreed}
+                    onChange={(e) => setAgreed(e.target.checked)}
+                  />
+                  I agree with Terms and Conditions
                 </label>
               </div>
 
@@ -209,20 +213,18 @@ export default function AddCredit({ user }) {
                 <button
                   onClick={() => Checkout(user, payment_info, setClicked)}
                   className="mt-4 bg-purple-400 text-white px-4 py-2 rounded"
+                  disabled={!agreed}
                 >
                   Buy {payment_info.credits} credits for ₹{payment_info.price}
                 </button>
               )}
             </div>
-
-            {/* Customer Satisfaction Section */}
             <div className="mt-8 text-center">
-              <h2 className="text-xl font-bold">100% Customer Satisfaction</h2>
-              <p className="text-gray-600">
-                We are committed to providing the best service to our customers.
+              <ShieldCheck className="w-6 h-6 text-green-500 mx-auto" />
+              <p>
+                100% satisfaction guaranteed. Secure payment methods available
               </p>
             </div>
-
             {/* Secure Payment Section */}
             <div className="mt-8 max-w-2xl mx-auto text-center">
               <div className="flex items-center justify-center gap-2 mb-6">
