@@ -124,7 +124,7 @@ export default function AddCredit({ user }) {
               } ${plan.popular ? "transform hover:-translate-y-1" : ""}`}
             >
               {plan.popular && (
-                <div className="absolute top-0 right-0 -m-2">
+                <div className="absolute top-4 right-2 -m-2">
                   <div className="bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full transform rotate-12">
                     POPULAR
                   </div>
