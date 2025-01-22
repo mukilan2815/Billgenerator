@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Shield, Clock, Users, Star, CreditCard } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import PayMethods from "@/components/Payment/PayMethods";
@@ -55,14 +55,36 @@ export default function AddCredit({ user }) {
     setPayment_info(plans.find((plan) => plan.id === planId));
   };
 
+  const [timeLeft, setTimeLeft] = useState(2453); // 40 minutes 53 seconds
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 0) {
+          clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatTime = (seconds) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}m ${s}s remaining`;
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
       <div className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
         <div className="flex flex-col items-center max-w-3xl mx-auto mb-16">
           <div className="flex items-center justify-center px-4 py-1 mb-6 bg-purple-100 rounded-full text-center">
             <Clock className="w-4 h-4 text-red-600 mr-2" />
-            <span className="text-red-600 text-base sm:text-lg font-medium">
-              Limited Time Offer - 40m 53s remaining
+            <span className="text-red-600 text-base sm:text-xs font-medium">
+              Limited Time Offer - {formatTime(timeLeft)}
             </span>
           </div>
 
@@ -115,76 +137,112 @@ export default function AddCredit({ user }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          {plans.map((plan) => (
-            <Card
-              key={plan.id}
-              className={`relative overflow-hidden transition-all duration-200 hover:shadow-lg ${
-                selectedPlan === plan.id ? "ring-2 ring-purple-500" : ""
-              } ${plan.popular ? "transform hover:-translate-y-1" : ""}`}
-            >
-              {plan.popular && (
-                <div className="absolute top-4 right-2 -m-2">
-                  <div className="bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full transform rotate-12">
-                    POPULAR
-                  </div>
-                </div>
-              )}
-
-              <CardContent className="p-4 sm:p-6">
-                <label className="cursor-pointer block">
-                  <div className="flex items-center mb-4">
-                    <input
-                      type="radio"
-                      name="plan"
-                      value={plan.id}
-                      checked={selectedPlan === plan.id}
-                      onChange={() => handlePlanChange(plan.id)}
-                      className="w-4 h-4 text-purple-600 border-gray-300 focus:ring-purple-500"
-                    />
-                    <span className="ml-3 text-base sm:text-xl font-semibold text-gray-900">
-                      {plan.name}
-                    </span>
-                  </div>
-
-                  <div className="mb-4">
-                    <div className="flex items-baseline">
-                      <span className="text-2xl sm:text-3xl font-bold text-gray-900">
-                        ₹{plan.price}
-                      </span>
-                      <span className="ml-2 text-xs sm:text-sm text-green-600 font-medium">
-                        Save ₹{plan.save}
-                      </span>
+        <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-purple-50 to-white">
+          <div className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
+            {/* Plan Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+              {plans.map((plan) => (
+                <Card
+                  key={plan.id}
+                  className={`relative overflow-hidden transition-all duration-200 hover:shadow-lg ${
+                    selectedPlan === plan.id ? "ring-2 ring-purple-500" : ""
+                  } ${plan.popular ? "transform hover:-translate-y-1" : ""}`}
+                >
+                  {plan.popular && (
+                    <div className="absolute top-4 right-2 -m-2">
+                      <div className="bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full transform rotate-12">
+                        POPULAR
+                      </div>
                     </div>
-                    <div className="mt-1 text-purple-600 font-semibold">
-                      {plan.credits} Credits
-                    </div>
-                  </div>
+                  )}
 
-                  <p className="text-gray-600 text-sm">{plan.description}</p>
-                </label>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                  <CardContent className="p-4 sm:p-6">
+                    <label className="cursor-pointer block">
+                      <div className="flex items-center mb-4">
+                        <input
+                          type="radio"
+                          name="plan"
+                          value={plan.id}
+                          checked={selectedPlan === plan.id}
+                          onChange={() => handlePlanChange(plan.id)}
+                          className="w-4 h-4 text-purple-600 border-gray-300 focus:ring-purple-500"
+                        />
+                        <span className="ml-3 text-base sm:text-xl font-semibold text-gray-900">
+                          {plan.name}
+                        </span>
+                      </div>
 
-        <div className="max-w-2xl mx-auto text-center">
-          <div className="flex items-center justify-center gap-2 mb-6">
-            <Shield className="w-5 h-5 text-green-500" />
-            <span className="text-gray-600 text-sm sm:text-base">
-              Secure payment processing
-            </span>
-          </div>
+                      <div className="mb-4">
+                        <div className="flex items-baseline">
+                          <span className="text-2xl sm:text-3xl font-bold text-gray-900">
+                            ₹{plan.price}
+                          </span>
+                          <span className="ml-2 text-xs sm:text-sm text-green-600 font-medium">
+                            Save ₹{plan.save}
+                          </span>
+                        </div>
+                        <div className="mt-1 text-purple-600 font-semibold">
+                          {plan.credits} Credits
+                        </div>
+                      </div>
 
-          <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm">
-            <div className="flex items-center justify-center mb-4">
-              <CreditCard className="w-5 h-5 text-gray-400 mr-2" />
-              <h3 className="text-base sm:text-lg font-medium text-gray-900">
-                Payment Methods
-              </h3>
+                      <p className="text-gray-600 text-sm">
+                        {plan.description}
+                      </p>
+                    </label>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
-            <div className="flex justify-center">
-              <PayMethods />
+
+            {/* Plan Selection and Buy Button */}
+            <div className="flex flex-col items-center">
+              <div className="mt-4">
+                <label className="flex items-center justify-center">
+                  <input type="checkbox" className="mr-2" />I agree with Terms
+                  and Conditions
+                </label>
+              </div>
+
+              {/* Conditionally render the "Buy" button */}
+              {selectedPlan && (
+                <button
+                  onClick={() => Checkout(user, payment_info, setClicked)}
+                  className="mt-4 bg-purple-400 text-white px-4 py-2 rounded"
+                >
+                  Buy {payment_info.credits} credits for ₹{payment_info.price}
+                </button>
+              )}
+            </div>
+
+            {/* Customer Satisfaction Section */}
+            <div className="mt-8 text-center">
+              <h2 className="text-xl font-bold">100% Customer Satisfaction</h2>
+              <p className="text-gray-600">
+                We are committed to providing the best service to our customers.
+              </p>
+            </div>
+
+            {/* Secure Payment Section */}
+            <div className="mt-8 max-w-2xl mx-auto text-center">
+              <div className="flex items-center justify-center gap-2 mb-6">
+                <Shield className="w-5 h-5 text-green-500" />
+                <span className="text-gray-600 text-sm sm:text-base">
+                  Secure payment processing
+                </span>
+              </div>
+
+              <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm">
+                <div className="flex items-center justify-center mb-4">
+                  <CreditCard className="w-5 h-5 text-gray-400 mr-2" />
+                  <h3 className="text-base sm:text-lg font-medium text-gray-900">
+                    Payment Methods
+                  </h3>
+                </div>
+                <div className="flex justify-center">
+                  <PayMethods />
+                </div>
+              </div>
             </div>
           </div>
         </div>
