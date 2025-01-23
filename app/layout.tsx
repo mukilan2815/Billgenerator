@@ -28,6 +28,23 @@ export default async function RootLayout({
           id="gtag-adword"
           src="https://www.googletagmanager.com/gtag/js?id=AW-16575809362"
         ></Script>
+        <Head>
+          {/* Google Tag (gtag.js) */}
+          <script
+            async
+            src="https://www.googletagmanager.com/gtag/js?id=AW-16832148285"
+          ></script>
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'AW-16832148285');
+      `,
+            }}
+          />
+        </Head>
         <Script async defer id="google-adword" strategy="lazyOnload">
           {`
           window.dataLayer = window.dataLayer || [];
