@@ -134,11 +134,7 @@ export default function GymBill({ data, session }) {
           />
         </BillEditContainer>
         <BillViewContainer>
-          {finalData.template_data.id === 1 ? (
             <GymReceipt1 data={finalData} />
-          ) : (
-            ""
-          )}
         </BillViewContainer>
       </div>
     </BillContainer>

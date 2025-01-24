@@ -154,11 +154,7 @@ export default function FlightBill({ data, session }) {
           />
         </BillEditContainer>
         <BillViewContainer>
-          {finalData.template_data.id === 1 ? (
             <FlightReceipt1 data={finalData} />
-          ) : (
-            ""
-          )}
         </BillViewContainer>
       </div>
     </BillContainer>

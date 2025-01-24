@@ -27,7 +27,8 @@ export default function MobileBill({ data, session }) {
     tax: 0,
     email: session?.user?.email || "",
   });
-
+  console.log(session);
+  console.log(finalData);
   useEffect(() => {
     // Initialize additional data if needed
   }, []);
@@ -131,11 +132,7 @@ export default function MobileBill({ data, session }) {
           />
         </BillEditContainer>
         <BillViewContainer>
-          {finalData.template_data.id === 1 ? (
-            <MobileReceipt1 data={finalData} />
-          ) : (
-            ""
-          )}
+          <MobileReceipt1 data={finalData} />
         </BillViewContainer>
       </div>
     </BillContainer>
