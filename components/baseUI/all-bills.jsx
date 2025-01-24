@@ -1,5 +1,5 @@
 import { LuFuel } from "react-icons/lu";
-import { FaCarSide } from "react-icons/fa";
+import { FaCarSide, FaMobileAlt, FaPlane } from "react-icons/fa";
 import { GrUserWorker } from "react-icons/gr";
 import { TfiReceipt } from "react-icons/tfi";
 import { SiYourtraveldottv } from "react-icons/si";
@@ -94,5 +94,19 @@ export const AllBills = [
     description: "1 template available",
     info: "Generate gym membership or fee receipts effortlessly using our Gym Bill Generator.",
     icon: GiWeightLiftingUp,
+  },
+  {
+    name: "Flight Bill",
+    link: "/tools/flight-bill",
+    description: "1 template available",
+    info: "Generate flight tickets or boarding pass receipts effortlessly using our Flight Bill Generator.",
+    icon: FaPlane,
+  },
+  {
+    name: "Mobile Bill",
+    link: "/tools/mobile-bill",
+    description: "1 template available",
+    info: "Generate mobile bill receipts effortlessly using our Mobile Bill Generator.",
+    icon: FaMobileAlt,
   },
 ];
