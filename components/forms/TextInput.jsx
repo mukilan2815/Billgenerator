@@ -10,7 +10,7 @@ export default function TextInput({
   className,
   placeholder,
   finalData,
-  setFinalData,
+  setFinalData = () => {},
   type,
   value,
   required,

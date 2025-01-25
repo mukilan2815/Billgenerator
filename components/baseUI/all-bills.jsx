@@ -10,6 +10,12 @@ import { LiaFileInvoiceDollarSolid } from "react-icons/lia";
 import { FaWifi } from "react-icons/fa6";
 import { FaTaxi } from "react-icons/fa";
 import { GiWeightLiftingUp } from "react-icons/gi";
+import { GiHotel } from "react-icons/gi";
+import { FaHotel } from "react-icons/fa";
+import { FaMoneyBillWave } from "react-icons/fa";
+import { FaPen } from "react-icons/fa";
+// import { FaBook, FaShoppingCart, FaPencilAlt } from "react-icons/fa5";
+import { FaBook } from "react-icons/fa";
 export const AllBills = [
   {
     name: "Fuel Bill",
@@ -108,5 +114,40 @@ export const AllBills = [
     description: "1 template available",
     info: "Generate mobile bill receipts effortlessly using our Mobile Bill Generator.",
     icon: FaMobileAlt,
+  },
+  {
+    name: "Ecommerce Invoice",
+    link: "/tools/ecommerce-invoice",
+    description: "1 template available",
+    info: "Generate accurate E-commerce invoices effortlessly with our user-friendly generator. Save time, ensure compliance, and enhance efficiency in your billing process. Perfect for businesses of all sizes.",
+    icon: LiaFileInvoiceDollarSolid,
+  },
+  {
+    name: "Hotel Bill",
+    link: "/tools/hotel-bill",
+    description: "1 template available",
+    info: "Generate detailed hotel bills effortlessly using our Hotel Bill Generator.",
+    icon: FaHotel,
+  },
+  {
+    name: "Book Bill",
+    link: "/tools/book-bill",
+    description: "1 template available",
+    info: "Create professional book sales receipts with our Book Bill Generator.",
+    icon: FaBook,
+  },
+  {
+    name: "Recharge Bill",
+    link: "/tools/recharge-bill",
+    description: "1 template available",
+    info: "Generate recharge bills easily using our Recharge Bill Generator.",
+    icon: FaMoneyBillWave,
+  },
+  {
+    name: "Stationary Bill",
+    link: "/tools/stationary-bill",
+    description: "1 template available",
+    info: "Create professional stationary bills with our Stationary Bill Generator.",
+    icon: FaPen,
   },
 ];

@@ -134,9 +134,15 @@ export default function GymBill({ data, session }) {
           />
         </BillEditContainer>
         <BillViewContainer>
-            <GymReceipt1 data={finalData} />
+          <GymReceipt1 data={finalData} />
         </BillViewContainer>
       </div>
     </BillContainer>
   );
 }
+// Hotel Bills
+// Book Bills
+// E-Commerce Bills
+// Recharge Bill
+// Cab Bills
+// Stationary Bills

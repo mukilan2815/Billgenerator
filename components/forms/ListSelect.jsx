@@ -22,7 +22,7 @@ export default function ListSelect({
       <div className="w-full">
         {" "}
         <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-          {data.heading}
+          {data?.heading}
         </label>
         <Listbox value={selected} onChange={setSelected}>
           <div className="relative">
@@ -44,7 +44,7 @@ export default function ListSelect({
               leaveTo="opacity-0"
             >
               <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm list-none pl-0 z-50">
-                {data.data.map((person, personIdx) => (
+                {data?.data.map((person, personIdx) => (
                   <Listbox.Option
                     key={personIdx}
                     className={({ active }) =>
