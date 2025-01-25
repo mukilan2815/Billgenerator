@@ -1,205 +1,271 @@
 "use client";
-import React, { useState } from "react";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
-import { AiOutlineLoading } from "react-icons/ai";
-import Link from "next/link";
-import { Slash } from "lucide-react";
-import { Dosis } from "next/font/google";
+import React, { useState, useEffect } from "react";
+import { Shield, Clock, Star, CreditCard, ShieldCheck } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 import PayMethods from "@/components/Payment/PayMethods";
-import { RazorpayCheckout } from "@/lib/razorpay-checkout"; // Adjust the import path as necessary
 
-const dosis_sans = Dosis({ weight: "700", subsets: ["latin"] });
-
-const offers = [
+const plans = [
   {
-    amount: 249,
-    credit: 1500,
-    offer: 84,
-    active: true,
+    id: "basic",
+    name: "Basic",
+    price: 199,
+    credits: 300,
+    save: 101,
+    description:
+      "For individuals managing personal receipts. Get 34% bonus credits to simplify bill generation.",
   },
   {
-    amount: 200,
-    credit: 220,
-    offer: 10,
-    active: false,
+    id: "standard",
+    name: "Standard",
+    price: 249,
+    credits: 400,
+    save: 151,
+    description:
+      "For freelancers, creators, handling multiple bills. Get 38% extra credits to automate receipts.",
   },
   {
-    amount: 500,
-    credit: 575,
-    offer: 15,
-    active: false,
+    id: "premium",
+    name: "Premium",
+    price: 500,
+    credits: 1000,
+    save: 500,
+    description:
+      "For professionals managing high-volume receipts. Double your credits and save 50%.",
+    popular: true,
   },
   {
-    amount: 1000,
-    credit: 1200,
-    offer: 20,
-    active: false,
+    id: "ultimate",
+    name: "Ultimate",
+    price: 1000,
+    credits: 3000,
+    save: 2000,
+    description:
+      "For businesses processing large-scale invoices. Triple your credits and save 67%.",
   },
 ];
 
 export default function AddCredit({ user }) {
-  const activeOffers = offers.filter((o) => o.active);
-  const inactiveOffers = offers.filter((o) => !o.active);
-  const [paymentInfo, setPaymentInfo] = useState(activeOffers[0]);
-  const [isChecked, setIsChecked] = useState(false);
-  const [clicked, setClicked] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState("premium");
+  const [payment_info, setPayment_info] = useState(
+    plans.find((plan) => plan.id === "premium")
+  );
+  const [agreed, setAgreed] = useState(false);
 
-  async function handleAction(event) {
-    event.preventDefault();
-    setClicked(true);
-    await RazorpayCheckout({
-      userId: user.id,
-      amount: paymentInfo.amount,
-      userInfo: user,
-      credits: paymentInfo.credit,
-    });
-    setClicked(false);
-  }
+  const handlePlanChange = (planId) => {
+    setSelectedPlan(planId);
+    setPayment_info(plans.find((plan) => plan.id === planId));
+  };
+
+  const [timeLeft, setTimeLeft] = useState(2453); // 40 minutes 53 seconds
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 0) {
+          clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatTime = (seconds) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}m ${s}s remaining`;
+  };
 
   return (
-    <div className="max-w-7xl m-auto my-36 relative px-5 sm:px-10">
-      <h1 className="text-3xl font-medium my-7">Add Credit</h1>
-      <h2 className="text-zinc-500 my-4">Credit offers</h2>
+    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
+      <div className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
+        <div className="flex flex-col items-center max-w-3xl mx-auto mb-16">
+          <div className="flex items-center justify-center px-4 py-1 mb-6 bg-purple-100 rounded-full text-center">
+            <Clock className="w-4 h-4 text-red-600 mr-2" />
+            <span className="text-red-600 text-base sm:text-xs font-medium">
+              Limited Time Offer - {formatTime(timeLeft)}
+            </span>
+          </div>
 
-      <ul className="grid grid-cols-2 lg:grid-cols-4 max-w-2xl gap-4">
-        {activeOffers.map((e, i) => (
-          <li
-            key={i}
-            className={`${
-              paymentInfo.amount === e.amount
-                ? "bg-white ring-2 ring-blue-500"
-                : "bg-zinc-100"
-            } overflow-hidden px-5 py-2 rounded-2xl flex flex-col gap-2 cursor-pointer relative `}
-            onClick={() => setPaymentInfo(e)}
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-green-500 font-bold text-2xl">
-                ₹{e.amount}
-              </span>{" "}
-              <span className="absolute w-32 h-14 bg-rose-500 text-white rotate-45 -right-10 -top-1 text-[10px] pt-5 text-center font-bold">
-                Limited <br />
-                Offer
-              </span>
-            </div>
-            <div className="flex justify-between items-center relative">
-              <span className="italic font-semibold text-sm">Unlimited</span>
-              <div className="flex flex-col">
-                <span className="text-xl">{e.offer}%</span>
-                <span className="text-xs -mt-1">Off</span>
-              </div>
-            </div>
-          </li>
-        ))}
-        {inactiveOffers.map((e, i) => (
-          <li
-            key={i}
-            className="cursor-not-allowed bg-zinc-100 px-5 py-2 rounded-2xl flex flex-col gap-2 relative"
-          >
-            <div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center -rotate-12">
-              <Slash
-                strokeWidth={0.5}
-                size={120}
-                className="text-rose-100 absolute -top-3 left-0 right-0 bottom-0 flex items-center justify-center z-10"
-              />
-              <Slash
-                strokeWidth={0.5}
-                size={120}
-                className="text-zinc-800 ml-1 absolute -top-3 left-0 right-0 bottom-0 flex items-center justify-center"
-              />
-            </div>
-            <span className="text-zinc-500">₹{e.amount}</span>
-            <div className="flex justify-between items-center">
-              <span className="text-xs">
-                {e.credit}
-                <br /> Credits
-              </span>
-              <span className="text-2xl">{e.offer}%</span>
-            </div>
-          </li>
-        ))}
-      </ul>
-      <div className="grid lg:grid-cols-2">
-        <div>
-          <p className="text-green-500 mt-7 max-w-sm text-lg">
-            🚀 Unlimited Bill & Invoice Generation for Life - Just at{" "}
-            <span className=" text-rose-500 font-semibold">₹249</span> ! Pay
-            Once, Use Forever! 🕒
+          <h1 className="text-3xl sm:text-5xl font-bold text-gray-900 mb-4 text-center">
+            Unlimited Invoices, One-Time Purchase—{" "}
+            <span className="text-purple-500">Generate Bills Forever!</span>
+          </h1>
+
+          <p className="text-gray-600 text-sm sm:text-lg mb-6 text-center">
+            Say goodbye to recurring costs! With our one-time purchase, enjoy
+            unlimited invoice and bill generation. Pay once and handle all your
+            billing needs without limits!
           </p>
-          <form onSubmit={handleAction} className="my-10">
-            <span className="block text-zinc-500 mb-2">Amount</span>
-            <div className="flex space-x-3 items-center">
-              <input
-                readOnly
-                type="number"
-                value={paymentInfo.amount}
-                className="border border-zinc-300 rounded-lg px-2 py-1 w-28"
-              />
-              <div>Buy unlimited credits for ₹ {paymentInfo.amount}</div>
-            </div>
-            <div className="my-5">
-              <span className="block text-zinc-500 mb-2">
-                Have A Coupon Code?
-              </span>
-              <div className="flex space-x-3 items-center">
-                <input
-                  type="text"
-                  className="border border-zinc-300 rounded-lg px-2 py-1 w-28"
-                />
-                <div>Apply</div>
-              </div>
-            </div>
 
-            <div className="my-5 space-y-7">
-              <div className="flex items-center space-x-2 my-10">
-                <Checkbox
-                  required={true}
-                  id="terms"
-                  checked={isChecked}
-                  onCheckedChange={() => setIsChecked((prev) => !prev)}
+          <div className="flex items-center justify-center flex-wrap space-x-4">
+            <div className="flex items-center mb-4 sm:mb-0">
+              <div className="flex space-x-2">
+                <img
+                  src="https://i.pravatar.cc/50?img=1"
+                  alt="Avatar 1"
+                  className="w-8 sm:w-10 h-8 sm:h-10 rounded-full"
                 />
-                <label
-                  htmlFor="terms"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                <img
+                  src="https://i.pravatar.cc/50?img=2"
+                  alt="Avatar 2"
+                  className="w-8 sm:w-10 h-8 sm:h-10 rounded-full"
+                />
+                <img
+                  src="https://i.pravatar.cc/50?img=3"
+                  alt="Avatar 3"
+                  className="w-8 sm:w-10 h-8 sm:h-10 rounded-full"
+                />
+                <img
+                  src="https://i.pravatar.cc/50?img=4"
+                  alt="Avatar 4"
+                  className="w-8 sm:w-10 h-8 sm:h-10 rounded-full"
+                />
+              </div>
+              <span className="text-gray-700 ml-4 text-sm sm:text-base">
+                28k+ happy users
+              </span>
+            </div>
+            <div className="hidden sm:block h-4 w-px bg-gray-300"></div>
+            <div className="flex items-center">
+              <Star className="w-5 h-5 text-yellow-400 mr-2" />
+              <span className="text-gray-700 text-sm sm:text-base">
+                4.9/5 rating
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-purple-50 to-white">
+          <div className="max-w-7xl -mt-24 mx-auto px-4 py-16 sm:px-6 lg:px-8">
+            {/* Plan Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+              {plans.map((plan) => (
+                <Card
+                  key={plan.id}
+                  className={`relative overflow-hidden transition-all duration-200 hover:shadow-lg ${
+                    selectedPlan === plan.id ? "ring-2 ring-purple-500" : ""
+                  } ${plan.popular ? "transform hover:-translate-y-1" : ""}`}
                 >
-                  I agree with terms and conditions
+                  {plan.popular && (
+                    <div className="absolute top-4 right-2 -m-2">
+                      <div className="bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full transform rotate-12">
+                        POPULAR
+                      </div>
+                    </div>
+                  )}
+
+                  <CardContent className="p-4 sm:p-6">
+                    <label className="cursor-pointer block">
+                      <div className="flex items-center mb-4">
+                        <input
+                          type="radio"
+                          name="plan"
+                          value={plan.id}
+                          checked={selectedPlan === plan.id}
+                          onChange={() => handlePlanChange(plan.id)}
+                          className="w-4 h-4 text-purple-600 border-gray-300 focus:ring-purple-500"
+                        />
+                        <span className="ml-3 text-base sm:text-xl font-semibold text-gray-900">
+                          {plan.name}
+                        </span>
+                      </div>
+
+                      <div className="mb-4">
+                        <div className="flex items-baseline">
+                          <span className="text-2xl sm:text-3xl font-bold text-gray-900">
+                            ₹{plan.price}
+                          </span>
+                          <span className="ml-2 text-xs sm:text-sm text-green-600 font-medium">
+                            Save ₹{plan.save}
+                          </span>
+                        </div>
+                        <div className="mt-1 text-purple-600 font-semibold">
+                          {plan.credits} Credits
+                        </div>
+                      </div>
+
+                      <p className="text-gray-600 text-sm">
+                        {plan.description}
+                      </p>
+                    </label>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="mt-4">
+                <label className="flex items-center justify-center">
+                  <input
+                    type="checkbox"
+                    className="mr-2"
+                    checked={agreed}
+                    onChange={(e) => setAgreed(e.target.checked)}
+                  />
+                  I agree with Terms and Conditions
                 </label>
               </div>
 
-              <div className="mt-0">
-                {user ? (
-                  <Button disabled={clicked} className="w-28 uppercase">
-                    {clicked ? (
-                      <AiOutlineLoading size={20} className="animate-spin" />
-                    ) : (
-                      "Add credits"
-                    )}
-                  </Button>
-                ) : (
-                  <Button asChild className="w-28 uppercase">
-                    <Link href={"/sign-in"}>Add credit </Link>
-                  </Button>
-                )}
+              {/* Conditionally render the "Buy" button */}
+              {selectedPlan && (
+                <button
+                  onClick={() => Checkout(user, payment_info, setClicked)}
+                  className="mt-4 bg-purple-400 text-white px-4 py-2 rounded"
+                  disabled={!agreed}
+                >
+                  Buy {payment_info.credits} credits for ₹{payment_info.price}
+                </button>
+              )}
+            </div>
+            <div className="mt-8 flex items-center justify-center">
+              <ShieldCheck className="w-6 h-6 text-green-500 mr-2" />
+              <p className="text-gray-600 text-base">
+                100% Secure payment processing
+              </p>
+            </div>
+            {/* Secure Payment Section */}
+            <div className="mt-8 max-w-2xl mx-auto text-center">
+              <div className=" p-4 sm:p-6 rounded-lg shadow-sm">
+                <div className="flex items-center justify-center mb-4">
+                  <CreditCard className="w-5 h-5 text-gray-400 mr-2" />
+                  <h3 className="text-base sm:text-lg font-medium text-gray-900">
+                    Payment Methods
+                  </h3>
+                </div>
+                <div className="flex justify-center">
+                  <PayMethods />
+                </div>
               </div>
             </div>
-          </form>
-          <PayMethods />
-        </div>
-        <div className="hidden relative lg:flex lg:items-start pt-20">
-          <div className="relative bg-yellow-400 px-10 py-7 rounded-[36px]">
-            <h2
-              className={`${dosis_sans.className} first-letter:text-4xl sm:first-letter:text-6xl text-3xl sm:text-4xl leading-loose tracking-wide max-w-md mb-7`}
-            >
-              Generate Invoices & Bills Instantly in just 1-Click
-            </h2>
-            <h3
-              className={`${dosis_sans.className} text-3xl sm:text-2xl leading-loose tracking-wide max-w-md mb-7`}
-            >
-              Add Credits now and generate Professional Invoices in Seconds.
-            </h3>
           </div>
         </div>
       </div>
     </div>
   );
+}
+
+export async function Checkout(user, payment_info, setClicked) {
+  const res = await fetch(checkEnvironment().concat("/api/payment/initiate"), {
+    cache: "no-store",
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      user: user,
+      payment_info: payment_info,
+    }),
+  });
+  const data = await res.json();
+  console.log("data", data);
+  if (res.ok) {
+    setClicked(false);
+    const url = data.url;
+    console.log("url", url);
+    window.location.href = url;
+  } else {
+    setClicked(false);
+  }
 }
