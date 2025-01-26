@@ -43,7 +43,7 @@ export default function StationaryInvoice1({ data }) {
   const { productTotal, taxAmount, total } = calculateTotal();
 
   return (
-    <div id="doc" className="w-[600px]">
+    <div id="doc" className="">
       <div className={`${nunito_sans.className} container mt-5 p-2.5`}>
         <h1 className="text-center text-2xl font-bold mb-5">
           {data.company_name || "Stationary Store"}

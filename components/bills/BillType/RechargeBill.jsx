@@ -5,7 +5,7 @@ import BillContainer from "../BillContainer";
 import RadioSelect from "../../forms/RadioSelect";
 import TextInput from "../../forms/TextInput";
 import SignatureUpload from "../../forms/SignatureUpload";
-import RechargeInvoice1 from "../../previews/RechargeInvoice/RechargeInvoice1.jsx"; // Path for Recharge Invoice preview
+import RechargeInvoice1 from "../../previews/RechargeInvoice/RechargeInvoice1"; // Path for Recharge Invoice preview
 import DateSelect from "../../forms/DateSelect";
 import ListSelect from "../../forms/ListSelect";
 import BillEditContainer from "../BillEditContainer";
@@ -15,7 +15,8 @@ export default function RechargeBill({ data, session }) {
   const [finalData, setFinalData] = useState({
     template: data.templates.data[0].title,
     template_data: data.templates.data[0],
-    invoice_number: 5001, // Default invoice number
+    logo: data.carriers[0].logo, 
+    invoice_number: 5001, 
     mobile_number: "",
     recharge_amount: 0,
     recharge_plan: "",

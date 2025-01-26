@@ -31,7 +31,7 @@ export default function FlightReceipt1({ data }) {
   }
 
   return (
-    <div id="doc" className="w-[600px]">
+    <div id="doc" className="w-full sticky max-w-[600px] bg-white mx-auto">
       <div className={`${nunito_sans.className} container mt-5 p-2.5`}>
         <h1 className="text-center text-2xl font-bold mb-5">
           {data.flight_name}

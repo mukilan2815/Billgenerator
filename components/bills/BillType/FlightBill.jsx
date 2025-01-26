@@ -37,125 +37,130 @@ export default function FlightBill({ data, session }) {
 
   return (
     <BillContainer>
-      <div className="grid lg:grid-cols-2 gap-y-5">
-        <BillEditContainer finalData={finalData} session={session}>
-          <h1>{data.title}</h1>
-          <RadioSelect
-            title="Select Template"
-            data={data.templates}
-            name="template"
-            finalData={finalData}
-            setFinalData={setFinalData}
-          />
-          <h2 className="my-3">Flight Details</h2>
-          <TextInput
-            title="Flight Name"
-            placeholder="Enter flight name..."
-            finalData={finalData}
-            setFinalData={setFinalData}
-            name="flight_name"
-            required={true}
-          />
-          <TextInput
-            title="Flight Number"
-            placeholder="Enter flight number..."
-            finalData={finalData}
-            setFinalData={setFinalData}
-            name="flight_number"
-            required={true}
-          />
-          <h3>Travel Schedule</h3>
-          <div className="grid grid-cols-2 gap-x-10">
-            <DateSelect
-              title="Departure Date"
+      <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
+        {/* Left Side - Form */}
+        <div className="space-y-6">
+          <BillEditContainer finalData={finalData} session={session}>
+            <h1>{data.title}</h1>
+            <RadioSelect
+              title="Select Template"
+              data={data.templates}
+              name="template"
               finalData={finalData}
               setFinalData={setFinalData}
-              name="departure_date"
             />
-            <TimeSelect
-              title="Departure Time"
-              finalData={finalData}
-              setFinalData={setFinalData}
-              name="departure_time"
-            />
-            <DateSelect
-              title="Arrival Date"
-              finalData={finalData}
-              setFinalData={setFinalData}
-              name="arrival_date"
-            />
-            <TimeSelect
-              title="Arrival Time"
-              finalData={finalData}
-              setFinalData={setFinalData}
-              name="arrival_time"
-            />
-          </div>
-          <h3>Passenger Details</h3>
-          <TextInput
-            title="Passenger Name"
-            placeholder="Enter passenger name..."
-            finalData={finalData}
-            setFinalData={setFinalData}
-            name="passenger_name"
-            required={true}
-          />
-          <TextInput
-            title="Ticket Number"
-            placeholder="Enter ticket number..."
-            finalData={finalData}
-            setFinalData={setFinalData}
-            name="ticket_number"
-            required={true}
-          />
-          <TextInput
-            title="Seat Number"
-            placeholder="Enter seat number..."
-            finalData={finalData}
-            setFinalData={setFinalData}
-            name="seat_number"
-          />
-          <TextInput
-            title="Email Address"
-            placeholder="Enter email..."
-            value={finalData.email}
-            finalData={finalData}
-            setFinalData={setFinalData}
-            name="email"
-            description="Bill PDF will be sent to this email address."
-            required={true}
-          />
-          <h3>Payment Details</h3>
-          <div className="grid grid-cols-2 gap-x-10">
+            <h2 className="my-3">Flight Details</h2>
             <TextInput
-              title="Amount"
-              placeholder="Enter amount..."
-              type="number"
+              title="Flight Name"
+              placeholder="Enter flight name..."
               finalData={finalData}
               setFinalData={setFinalData}
-              name="amount"
+              name="flight_name"
               required={true}
             />
             <TextInput
-              title="Tax %"
-              placeholder="Enter tax percentage..."
-              type="number"
+              title="Flight Number"
+              placeholder="Enter flight number..."
               finalData={finalData}
               setFinalData={setFinalData}
-              name="tax"
+              name="flight_number"
+              required={true}
             />
-          </div>
-          <SignatureImage
-            title="Airline Logo URL"
-            placeholder="Enter valid logo image URL..."
-            name="signature"
-            finalData={finalData}
-            setFinalData={setFinalData}
-          />
-        </BillEditContainer>
-        <BillViewContainer>
+            <h3>Travel Schedule</h3>
+            <div className="grid grid-cols-2 gap-x-10">
+              <DateSelect
+                title="Departure Date"
+                finalData={finalData}
+                setFinalData={setFinalData}
+                name="departure_date"
+              />
+              <TimeSelect
+                title="Departure Time"
+                finalData={finalData}
+                setFinalData={setFinalData}
+                name="departure_time"
+              />
+              <DateSelect
+                title="Arrival Date"
+                finalData={finalData}
+                setFinalData={setFinalData}
+                name="arrival_date"
+              />
+              <TimeSelect
+                title="Arrival Time"
+                finalData={finalData}
+                setFinalData={setFinalData}
+                name="arrival_time"
+              />
+            </div>
+            <h3>Passenger Details</h3>
+            <TextInput
+              title="Passenger Name"
+              placeholder="Enter passenger name..."
+              finalData={finalData}
+              setFinalData={setFinalData}
+              name="passenger_name"
+              required={true}
+            />
+            <TextInput
+              title="Ticket Number"
+              placeholder="Enter ticket number..."
+              finalData={finalData}
+              setFinalData={setFinalData}
+              name="ticket_number"
+              required={true}
+            />
+            <TextInput
+              title="Seat Number"
+              placeholder="Enter seat number..."
+              finalData={finalData}
+              setFinalData={setFinalData}
+              name="seat_number"
+            />
+            <TextInput
+              title="Email Address"
+              placeholder="Enter email..."
+              value={finalData.email}
+              finalData={finalData}
+              setFinalData={setFinalData}
+              name="email"
+              description="Bill PDF will be sent to this email address."
+              required={true}
+            />
+            <h3>Payment Details</h3>
+            <div className="grid grid-cols-2 gap-x-10">
+              <TextInput
+                title="Amount"
+                placeholder="Enter amount..."
+                type="number"
+                finalData={finalData}
+                setFinalData={setFinalData}
+                name="amount"
+                required={true}
+              />
+              <TextInput
+                title="Tax %"
+                placeholder="Enter tax percentage..."
+                type="number"
+                finalData={finalData}
+                setFinalData={setFinalData}
+                name="tax"
+              />
+            </div>
+            <SignatureImage
+              title="Airline Logo URL"
+              placeholder="Enter valid logo image URL..."
+              name="signature"
+              finalData={finalData}
+              setFinalData={setFinalData}
+            />
+          </BillEditContainer>
+
+          {/* Right Side: Preview */}
+          <BillViewContainer>
             <FlightReceipt1 data={finalData} />
-        </BillViewContainer>
+          </BillViewContainer>
+        </div>
       </div>
     </BillContainer>
   );

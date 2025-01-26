@@ -41,6 +41,11 @@ export default function RechargeInvoice1({ data }) {
   return (
     <div id="doc" className="w-[600px]">
       <div className={`${nunito_sans.className} container mt-5 p-2.5`}>
+        {/* Logo Section */}
+        <div className="text-center mb-5">
+          <img src={data.logo} alt="Provider Logo" className="h-20 mx-auto" />
+        </div>
+
         <h1 className="text-center text-2xl font-bold mb-5">
           {data.mobile_provider || "Recharge Provider"}
         </h1>
