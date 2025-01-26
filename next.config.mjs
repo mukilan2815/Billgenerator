@@ -6,6 +6,13 @@ const nextConfig = {
         protocol: "https",
         hostname: "**.googleusercontent.com",
         port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "**.postimg.cc",
+        port: "",
+        pathname: "/**",
       },
     ],
   },
