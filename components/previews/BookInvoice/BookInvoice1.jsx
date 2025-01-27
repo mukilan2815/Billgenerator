@@ -3,116 +3,182 @@ import { Nunito_Sans } from "next/font/google";
 
 const nunito_sans = Nunito_Sans({ weight: "400", subsets: ["latin"] });
 
-export default function BookInvoice1({ data }) {
+export default function BookReceiptPreview({ data }) {
   function formatDate(dateString) {
     if (dateString) {
       const monthNames = [
-        "January",
-        "February",
-        "March",
-        "April",
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
         "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
       ];
-      const parts = dateString.split("/");
-      const day = parseInt(parts[0], 10);
-      const month = parseInt(parts[1], 10) - 1;
-      const year = parseInt(parts[2], 10);
-      const date = new Date(year, month, day);
-      return `${day} ${monthNames[month]} ${year}`;
+      const parts = dateString.split("-");
+      const day = Number.parseInt(parts[0], 10);
+      const month = Number.parseInt(parts[1], 10) - 1;
+      const year = Number.parseInt(parts[2], 10);
+      if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+        return `${day} ${monthNames[month]} ${year}`;
+      }
     }
-    return "";
+    return dateString || "";
   }
 
   const calculateTotal = () => {
-    const bookTotal = data.book_details.reduce(
-      (acc, item) => acc + item.quantity * item.price,
-      0
+    return (
+      (Number.parseFloat(data.quantity) || 0) *
+      (Number.parseFloat(data.book_price) || 0)
     );
-    const taxAmount = (bookTotal * data.tax) / 100;
-    const total = bookTotal + taxAmount + data.shipping_cost;
-    return { bookTotal, taxAmount, total };
   };
 
-  const { bookTotal, taxAmount, total } = calculateTotal();
+  const Template1 = () => (
+    <>
+      <h1 className="text-2xl font-bold text-center mb-6">Book Receipt</h1>
+
+      <div className="mb-6">
+        <h2 className="font-bold mb-2">Bill To,</h2>
+        <p>Customer Name: {data.customer_name}</p>
+        <p>Book Name: {data.book_name}</p>
+        <p>Book Publisher: {data.publisher}</p>
+      </div>
+
+      <div className="mb-6">
+        <h2 className="font-bold mb-2">Receipt Details</h2>
+        <p>Receipt No: {data.receipt_no}</p>
+        <p>Receipt Date: {formatDate(data.date)}</p>
+        <p>Payment Method: {data.payment_method}</p>
+      </div>
+
+      <div className="mb-6">
+        <h2 className="font-bold mb-2">Receipt Summary</h2>
+        <table className="w-full mb-4">
+          <thead>
+            <tr className="border-b">
+              <th className="text-left py-2">Item</th>
+              <th className="text-left py-2">Description</th>
+              <th className="text-right py-2">Qty</th>
+              <th className="text-right py-2">Price</th>
+              <th className="text-right py-2">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td className="py-2">{data.book_name}</td>
+              <td className="py-2">{data.description}</td>
+              <td className="text-right py-2">{data.quantity}</td>
+              <td className="text-right py-2">₹{data.book_price}</td>
+              <td className="text-right py-2">₹{calculateTotal()}</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr className="border-t font-bold">
+              <td colSpan="4" className="text-right py-2">
+                Total:
+              </td>
+              <td className="text-right py-2">₹{calculateTotal()}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <div className="text-center space-y-4">
+        <p className="font-bold">Thank You! Visit Again</p>
+        <p className="text-sm italic">
+          "A room without books is like a body without a soul"
+        </p>
+        <p className="text-sm italic">
+          "Take a good book to bed with you books do not snore"
+        </p>
+      </div>
+    </>
+  );
+
+  const Template2 = () => (
+    <>
+      <h1 className="text-2xl font-bold text-center mb-6">Book Receipt</h1>
+
+      <div className="mb-6">
+        <p>Receipt No: {data.receipt_no}</p>
+        <p>Receipt Date: {formatDate(data.date)}</p>
+      </div>
+
+      <div className="mb-6">
+        <h2 className="font-bold mb-2">Bill To,</h2>
+        <p>Customer Name: {data.customer_name}</p>
+        <p>Book Name: {data.book_name}</p>
+        <p>Author: {data.book_author}</p>
+        <p>Book Publisher: {data.publisher}</p>
+      </div>
+
+      <div className="mb-6">
+        <h2 className="font-bold mb-2">Sold By,</h2>
+        <p>Store Name: {data.book_store_name}</p>
+        <p>Store Address: {data.store_address}</p>
+        <p>Payment Method: {data.payment_method}</p>
+      </div>
+
+      <div className="mb-6">
+        <h2 className="font-bold mb-2">Receipt Summary</h2>
+        <table className="w-full mb-4">
+          <thead>
+            <tr className="border-b">
+              <th className="text-left py-2">Item</th>
+              <th className="text-left py-2">Description</th>
+              <th className="text-right py-2">Qty</th>
+              <th className="text-right py-2">Price</th>
+              <th className="text-right py-2">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td className="py-2">{data.book_name}</td>
+              <td className="py-2">{data.description}</td>
+              <td className="text-right py-2">{data.quantity}</td>
+              <td className="text-right py-2">₹{data.book_price}</td>
+              <td className="text-right py-2">₹{calculateTotal()}</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr className="border-t font-bold">
+              <td colSpan="4" className="text-right py-2">
+                Total:
+              </td>
+              <td className="text-right py-2">₹{calculateTotal()}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <div className="text-center space-y-4">
+        <p className="font-bold">Thank You! Visit Again</p>
+        <p className="text-sm italic">
+          "Books are the quietest and most constant of friends; they are the
+          most accessible and wisest of counselors, and the most patient of
+          teachers"
+        </p>
+        <p className="text-sm italic">
+          "Books are good company, in sad times and happy times, for books are
+          people – people who have managed to stay alive by hiding between the
+          covers of a book."
+        </p>
+      </div>
+    </>
+  );
 
   return (
-    <div id="doc" className="w-[600px]">
-      <div className={`${nunito_sans.className} container mt-5 p-2.5`}>
-        <h1 className="text-center text-2xl font-bold mb-5">
-          {data.company_name || "Bookstore Name"}
-        </h1>
-        <p className="text-center mb-5">Book Invoice</p>
-        <div className="grid grid-cols-2 border-b-2 border-gray-400 mb-5">
-          <div className="px-4">
-            <h6 className="font-bold text-lg">Customer Name:</h6>
-            <p>{data.customer_name}</p>
-            <h6 className="font-bold text-lg">Phone Number:</h6>
-            <p>{data.phone_number}</p>
-            <h6 className="font-bold text-lg">Shipping Address:</h6>
-            <p>{data.shipping_address}</p>
-          </div>
-          <div className="px-4 text-right">
-            <h6 className="font-bold text-lg">Invoice Number:</h6>
-            <p>{data.invoice_number}</p>
-            <h6 className="font-bold text-lg">Order Date:</h6>
-            <p>{formatDate(data.order_date)}</p>
-            <h6 className="font-bold text-lg">Delivery Date:</h6>
-            <p>{formatDate(data.delivery_date)}</p>
-          </div>
-        </div>
-
-        <div className="border-b-2 border-gray-400 mb-5">
-          <h3 className="font-bold text-lg px-4 mb-2">Book Details:</h3>
-          <div className="px-4">
-            {data.book_details.map((book, index) => (
-              <div key={index} className="grid grid-cols-3 gap-4 mb-2">
-                <p>{book.title}</p>
-                <p>Qty: {book.quantity}</p>
-                <p>Price: ₹{book.price.toFixed(2)}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 border-b-2 border-gray-400 mb-5">
-          <div className="px-4">
-            <h6 className="font-bold text-lg">Book Total:</h6>
-            <p>₹ {bookTotal.toFixed(2)}</p>
-            <h6 className="font-bold text-lg">Tax:</h6>
-            <p>₹ {taxAmount.toFixed(2)}</p>
-          </div>
-          <div className="px-4 text-right">
-            <h6 className="font-bold text-lg">Shipping Cost:</h6>
-            <p>₹ {(data.shipping_cost || 0).toFixed(2)}</p>
-            <h6 className="font-bold text-lg">Total Amount:</h6>
-            <p>₹ {total.toFixed(2)}</p>
-          </div>
-        </div>
-
-        <div className="mt-4">
-          <h6 className="text-lg font-bold mb-2">Terms & Conditions</h6>
-          <p className="text-sm">
-            1. Orders are subject to availability and confirmation. <br />
-            2. Returns and refunds are applicable as per our return policy.{" "}
-            <br />
-            3. Prices and availability of items are subject to change without
-            notice. <br />
-            4. For any queries, contact: {data.email || "support@bookstore.com"}
-            .
-          </p>
-        </div>
-        <div className="mt-5 text-center">
-          <p className="font-bold">
-            Thank you for shopping with {data.company_name || "our bookstore"}!
-          </p>
-        </div>
+    <div
+      id="doc"
+      className="w-full max-w-[800px] bg-white mx-auto p-6 border rounded-lg shadow-lg"
+    >
+      <div className={`${nunito_sans.className}`}>
+        {data.template === "Template 1" ? <Template1 /> : <Template2 />}
       </div>
     </div>
   );

@@ -1,177 +1,196 @@
 "use client";
-import { useEffect, useState } from "react";
-import React from "react";
+import { useState } from "react";
 import BillContainer from "../BillContainer";
 import RadioSelect from "../../forms/RadioSelect";
 import TextInput from "../../forms/TextInput";
-import SignatureUpload from "../../forms/SignatureUpload";
-import BookInvoice1 from "../../previews/BookInvoice/BookInvoice1.jsx"; // Corrected file extension
 import DateSelect from "../../forms/DateSelect";
 import ListSelect from "../../forms/ListSelect";
 import BillEditContainer from "../BillEditContainer";
-import BillViewContainer from "../BillViewContainer";
-import AddItem from "../../forms/AddItem";
+import BookReceiptPreview from "../../previews/BookInvoice/BookInvoice1";
 
-export default function BookBill({ data, session }) {
+export default function BookInvoice({ data, session }) {
   const [finalData, setFinalData] = useState({
-    template: data.templates.data[0].title,
-    template_data: data.templates.data[0],
-    invoice_number: 1001, // Default invoice number
-    book_details: [{ title: "", author: "", quantity: 1, price: 0 }],
+    template: "Template 1",
+    template_data: {
+      title: "Template 1",
+      creditRequired: 1,
+    },
+    // Template 1 fields
+    book_name: "",
+    publisher: "",
+    description: "",
+    quantity: "",
+    book_price: "",
     customer_name: "",
-    customer_email: session?.user?.email || "",
-    customer_phone: "",
-    total_amount: 0,
-    tax: 0,
+    payment_method: "Select One",
+    date: "27-01-2025",
+    receipt_no: "R48625",
+    // Additional Template 2 fields
+    book_author: "",
+    book_store_name: "",
+    store_address: "",
+    terms_accepted: false,
   });
-
-  useEffect(() => {
-    // Recalculate total amount whenever book details change
-    const total = finalData.book_details.reduce(
-      (acc, item) => acc + item.quantity * item.price,
-      0
-    );
-    setFinalData((prev) => ({ ...prev, total_amount: total }));
-  }, [finalData.book_details]);
-
-  const updateBookDetails = (index, key, value) => {
-    const updatedDetails = [...finalData.book_details];
-    updatedDetails[index][key] = value;
-    setFinalData({ ...finalData, book_details: updatedDetails });
-  };
-
-  const addBook = () => {
-    setFinalData((prev) => ({
-      ...prev,
-      book_details: [
-        ...prev.book_details,
-        { title: "", author: "", quantity: 1, price: 0 },
-      ],
-    }));
-  };
 
   return (
     <BillContainer>
-      <div className="grid lg:grid-cols-2 gap-y-5">
-        <BillEditContainer finalData={finalData} session={session}>
-          <h1>{data.title}</h1>
-          <RadioSelect
-            title="Select Template"
-            data={data.templates}
-            name="template"
-            finalData={finalData}
-            setFinalData={setFinalData}
-          />
-          <h2 className="my-3">Customer Details</h2>
-          <TextInput
-            title="Customer Name"
-            placeholder="Enter customer name..."
-            finalData={finalData}
-            setFinalData={setFinalData}
-            name="customer_name"
-            required={true}
-          />
-          <TextInput
-            title="Phone Number"
-            placeholder="Enter phone number..."
-            finalData={finalData}
-            setFinalData={setFinalData}
-            name="customer_phone"
-            required={true}
-          />
-          <TextInput
-            title="Email Address"
-            placeholder="Enter email..."
-            value={finalData.customer_email}
-            finalData={finalData}
-            setFinalData={setFinalData}
-            name="customer_email"
-            required={true}
-          />
-          <h3>Book Details</h3>
-          {finalData.book_details.map((book, index) => (
-            <div key={index} className="grid grid-cols-3 gap-x-5">
-              <TextInput
-                title={`Book Title ${index + 1}`}
-                placeholder="Enter book title..."
-                finalData={finalData}
-                onChange={(event) =>
-                  updateBookDetails(index, "title", event.target.value)
-                }
-                name={`book_title_${index}`}
-                value={book.title}
-              />
-              <TextInput
-                title="Author"
-                placeholder="Enter author name..."
-                finalData={finalData}
-                onChange={(event) =>
-                  updateBookDetails(index, "author", event.target.value)
-                }
-                name={`book_author_${index}`}
-                value={book.author}
-              />
-              <TextInput
-                title="Quantity"
-                type="number"
-                placeholder="Enter quantity..."
-                finalData={finalData}
-                onChange={(event) =>
-                  updateBookDetails(
-                    index,
-                    "quantity",
-                    parseInt(event.target.value, 10)
-                  )
-                }
-                name={`book_quantity_${index}`}
-                value={book.quantity}
-              />
-              <TextInput
-                title="Price"
-                type="number"
-                placeholder="Enter price..."
-                finalData={finalData}
-                onChange={(event) =>
-                  updateBookDetails(
-                    index,
-                    "price",
-                    parseFloat(event.target.value)
-                  )
-                }
-                name={`book_price_${index}`}
-                value={book.price}
-              />
-            </div>
-          ))}
-          <button
-            type="button"
-            className="mt-2 text-blue-600"
-            onClick={addBook}
-          >
-            Add Book
-          </button>
-          <h3>Payment Details</h3>
-          <div className="grid grid-cols-2 gap-x-10">
+      <div className="grid grid-cols-2 gap-8">
+        <div className="space-y-6 max-h-[calc(100vh-2rem)] overflow-y-auto pr-4">
+          <BillEditContainer finalData={finalData} session={session}>
+            <h1 className="text-2xl font-bold mb-6">Book Invoice</h1>
+
+            <RadioSelect
+              title="Select Template"
+              data={{
+                heading: "Select Template",
+                data: [
+                  { title: "Template 1", creditRequired: 1 },
+                  { title: "Template 2", creditRequired: 1 },
+                ],
+              }}
+              name="template"
+              finalData={finalData}
+              setFinalData={setFinalData}
+            />
+
+            <h2 className="text-xl font-semibold mb-4">Book Receipt Details</h2>
+
+            {finalData.template === "Template 2" && (
+              <>
+                <TextInput
+                  title="Book Author"
+                  placeholder="Enter Author Name"
+                  required={true}
+                  finalData={finalData}
+                  setFinalData={setFinalData}
+                  name="book_author"
+                />
+                <TextInput
+                  title="Book Store Name"
+                  placeholder="Enter Book Store Name"
+                  required={true}
+                  finalData={finalData}
+                  setFinalData={setFinalData}
+                  name="book_store_name"
+                />
+                <TextInput
+                  title="Store Address"
+                  placeholder="Store Address"
+                  required={true}
+                  finalData={finalData}
+                  setFinalData={setFinalData}
+                  name="store_address"
+                />
+              </>
+            )}
+
             <TextInput
-              title="Tax %"
-              placeholder="Enter tax percentage..."
+              title="Name Of Book"
+              placeholder="Enter the Book name"
+              required={true}
+              finalData={finalData}
+              setFinalData={setFinalData}
+              name="book_name"
+            />
+
+            <TextInput
+              title="Publisher"
+              placeholder="Publisher"
+              required={true}
+              finalData={finalData}
+              setFinalData={setFinalData}
+              name="publisher"
+            />
+
+            <TextInput
+              title="Description"
+              placeholder="Enter something about Book..."
+              required={true}
+              finalData={finalData}
+              setFinalData={setFinalData}
+              name="description"
+            />
+
+            <TextInput
+              title="Quantity"
+              placeholder="Number of Books"
+              required={true}
               type="number"
               finalData={finalData}
               setFinalData={setFinalData}
-              name="tax"
+              name="quantity"
             />
-          </div>
-          <SignatureUpload
-            title="Company Logo URL"
-            placeholder="Enter valid logo image URL..."
-            name="logo_url"
-            finalData={finalData}
-            setFinalData={setFinalData}
-          />
-        </BillEditContainer>
-        <BillViewContainer>
-          <BookInvoice1 data={finalData} />
-        </BillViewContainer>
+
+            <TextInput
+              title="Book Price"
+              placeholder="Price of Book"
+              required={true}
+              type="number"
+              finalData={finalData}
+              setFinalData={setFinalData}
+              name="book_price"
+            />
+
+            <TextInput
+              title="Customer Name"
+              placeholder="Enter Customer Name"
+              required={true}
+              finalData={finalData}
+              setFinalData={setFinalData}
+              name="customer_name"
+            />
+
+            <ListSelect
+              title="Payment Method"
+              data={{
+                heading: "Select Payment Method",
+                data: ["Cash", "Card", "UPI", "Net Banking"],
+              }}
+              name="payment_method"
+              finalData={finalData}
+              setFinalData={setFinalData}
+            />
+
+            <DateSelect
+              title="Choose Date"
+              finalData={finalData}
+              setFinalData={setFinalData}
+              name="date"
+            />
+
+            <TextInput
+              title="Receipt No"
+              placeholder="R48625"
+              required={true}
+              finalData={finalData}
+              setFinalData={setFinalData}
+              name="receipt_no"
+            />
+
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="terms"
+                checked={finalData.terms_accepted}
+                onChange={(e) =>
+                  setFinalData({
+                    ...finalData,
+                    terms_accepted: e.target.checked,
+                  })
+                }
+                className="h-4 w-4 rounded border-gray-300"
+              />
+              <label htmlFor="terms" className="text-sm text-gray-600">
+                I have read the terms and conditions.
+              </label>
+            </div>
+          </BillEditContainer>
+        </div>
+
+        {/* Preview */}
+        <div className="sticky top-4">
+          <BookReceiptPreview data={finalData} />
+        </div>
       </div>
     </BillContainer>
   );

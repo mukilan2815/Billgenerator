@@ -1,182 +1,297 @@
 "use client";
-import { useEffect, useState } from "react";
-import React from "react";
+import { useState } from "react";
 import BillContainer from "../BillContainer";
 import RadioSelect from "../../forms/RadioSelect";
 import TextInput from "../../forms/TextInput";
-import SignatureUpload from "../../forms/SignatureUpload";
-import StationaryInvoicePreview from "../../previews/StationaryInvoice/StationaryInvoice1.jsx"; // Preview component
+import SignatureImage from "../../forms/SignatureImage";
 import DateSelect from "../../forms/DateSelect";
 import ListSelect from "../../forms/ListSelect";
 import BillEditContainer from "../BillEditContainer";
-import BillViewContainer from "../BillViewContainer";
+import { Plus, Trash2 } from "lucide-react";
+import StationaryPreview from "../../previews/StationaryInvoice/StationaryInvoice1";
 
 export default function StationaryBill({ data, session }) {
   const [finalData, setFinalData] = useState({
-    template: data.templates.data[0].title,
-    template_data: data.templates.data[0],
-    invoice_number: 1001, // Default invoice number
-    stationary_details: [{ name: "", quantity: 1, price: 0 }], // Default product details
+    template: "Template 1",
+    template_data: {
+      title: "Template 1",
+      creditRequired: 1,
+    },
+    stationary_name: "",
+    stationary_address: "",
+    invoice_number: "6639",
+    bill_date: "27-01-2025",
     customer_name: "",
-    customer_email: session?.user?.email || "",
-    customer_phone: "",
-    total_amount: 0,
-    tax: 0,
+    customer_address: "",
+    logo_url: "",
+    currency: "Indian Rupee - ₹",
+    items: [],
+    payment_method: "Select One",
+    tax_percentage: 0,
+    gst_no: "",
+    remark: "",
+    terms_accepted: false,
   });
 
-  useEffect(() => {
-    // Recalculate total amount whenever stationary details change
-    const total = finalData.stationary_details.reduce(
-      (acc, item) => acc + item.quantity * item.price,
-      0
-    );
-    setFinalData((prev) => ({ ...prev, total_amount: total }));
-  }, [finalData.stationary_details]);
-
-  const updateStationaryDetails = (index, key, value) => {
-    const updatedDetails = [...finalData.stationary_details];
-    updatedDetails[index][key] = value;
-    setFinalData({ ...finalData, stationary_details: updatedDetails });
-  };
-
-  const addStationaryItem = () => {
+  const addItem = () => {
     setFinalData((prev) => ({
       ...prev,
-      stationary_details: [
-        ...prev.stationary_details,
-        { name: "", quantity: 1, price: 0 },
+      items: [
+        ...prev.items,
+        {
+          description: "",
+          price: 0,
+          quantity: 0,
+          total: 0,
+        },
       ],
     }));
   };
 
+  const removeItem = (index) => {
+    setFinalData((prev) => ({
+      ...prev,
+      items: prev.items.filter((_, i) => i !== index),
+    }));
+  };
+
+  const updateItem = (index, field, value) => {
+    setFinalData((prev) => {
+      const newItems = [...prev.items];
+      const item = { ...newItems[index] };
+      item[field] = value;
+
+      // Calculate total
+      if (field === "price" || field === "quantity") {
+        const price = Number(field === "price" ? value : item.price);
+        const quantity = Number(field === "quantity" ? value : item.quantity);
+        item.total = price * quantity;
+      }
+
+      newItems[index] = item;
+      return { ...prev, items: newItems };
+    });
+  };
+
   return (
     <BillContainer>
-      <div className="flex w-full flex-col lg:flex-row justify-between gap-5">
-        {/* Form Section - Full width on mobile, left side on large screens */}
-        <div className="w-full lg:w-3/4">
+      <div className="grid grid-cols-2 gap-8">
+        <div className="space-y-6 max-h-[calc(100vh-2rem)] overflow-y-auto pr-4">
           <BillEditContainer finalData={finalData} session={session}>
-            <h1 className="text-xl font-bold mb-4">{data.title}</h1>
-            <RadioSelect
-              title="Select Template"
-              data={data.templates}
-              name="template"
+            <h1 className="text-2xl font-bold mb-6">Stationary Details</h1>
+
+            <TextInput
+              title="Stationary Name"
+              placeholder="Enter Stationary name"
               finalData={finalData}
               setFinalData={setFinalData}
+              name="stationary_name"
             />
-            <h2 className="my-3 text-lg font-semibold">Customer Details</h2>
-            <div className="space-y-4">
-              <TextInput
-                title="Customer Name"
-                placeholder="Enter customer name..."
-                finalData={finalData}
-                setFinalData={setFinalData}
-                name="customer_name"
-                required={true}
-              />
-              <TextInput
-                title="Phone Number"
-                placeholder="Enter phone number..."
-                finalData={finalData}
-                setFinalData={setFinalData}
-                name="customer_phone"
-                required={true}
-              />
-              <TextInput
-                title="Email Address"
-                placeholder="Enter email..."
-                value={finalData.customer_email}
-                finalData={finalData}
-                setFinalData={setFinalData}
-                name="customer_email"
-                required={true}
-              />
-            </div>
 
-            <h3 className="text-lg font-semibold my-3">
-              Stationary Item Details
-            </h3>
-            {finalData.stationary_details.map((item, index) => (
-              <div
-                key={index}
-                className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4"
-              >
-                <TextInput
-                  title={`Item Name ${index + 1}`}
-                  placeholder="Enter item name..."
-                  finalData={finalData}
-                  onChange={(event) =>
-                    updateStationaryDetails(index, "name", event.target.value)
-                  }
-                  name={`item_name_${index}`}
-                  value={item.name}
-                />
-                <TextInput
-                  title="Quantity"
-                  type="number"
-                  placeholder="Enter quantity..."
-                  finalData={finalData}
-                  onChange={(event) =>
-                    updateStationaryDetails(
-                      index,
-                      "quantity",
-                      parseInt(event.target.value, 10)
-                    )
-                  }
-                  name={`item_quantity_${index}`}
-                  value={item.quantity}
-                />
-                <TextInput
-                  title="Price"
-                  type="number"
-                  placeholder="Enter price..."
-                  finalData={finalData}
-                  onChange={(event) =>
-                    updateStationaryDetails(
-                      index,
-                      "price",
-                      parseFloat(event.target.value)
-                    )
-                  }
-                  name={`item_price_${index}`}
-                  value={item.price}
-                />
-              </div>
-            ))}
-            <button
-              type="button"
-              className="mt-2 text-blue-600 hover:text-blue-800"
-              onClick={addStationaryItem}
-            >
-              Add Item
-            </button>
+            <TextInput
+              title="Stationary Address"
+              placeholder="Enter Stationary Address"
+              finalData={finalData}
+              setFinalData={setFinalData}
+              name="stationary_address"
+            />
 
-            <h3 className="text-lg font-semibold my-3">Payment Details</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <TextInput
-                title="Tax %"
-                placeholder="Enter tax percentage..."
-                type="number"
-                finalData={finalData}
-                setFinalData={setFinalData}
-                name="tax"
-              />
-            </div>
+            <TextInput
+              title="Invoice Number"
+              placeholder="6639"
+              finalData={finalData}
+              setFinalData={setFinalData}
+              name="invoice_number"
+            />
 
-            <SignatureUpload
-              title="Company Logo URL"
-                placeholder="Enter valid logo image URL..."
+            <DateSelect
+              title="Stationary Bill Date"
+              finalData={finalData}
+              setFinalData={setFinalData}
+              name="bill_date"
+            />
+
+            <h2 className="text-xl font-semibold mt-6 mb-4">
+              Customer Details
+            </h2>
+
+            <TextInput
+              title="Customer Name"
+              placeholder="Enter Customer Name"
+              finalData={finalData}
+              setFinalData={setFinalData}
+              name="customer_name"
+            />
+
+            <TextInput
+              title="Customer Address"
+              placeholder="Customer Address..."
+              finalData={finalData}
+              setFinalData={setFinalData}
+              name="customer_address"
+            />
+
+            <SignatureImage
+              title="Logo Url"
+              placeholder="URL Upload"
+              description="Upload on server and get Direct URL- PostImages, webdevtools"
               name="logo_url"
               finalData={finalData}
               setFinalData={setFinalData}
             />
-          </BillEditContainer>``
+
+            <ListSelect
+              title="Currency"
+              data={{
+                heading: "Select Currency",
+                data: ["Indian Rupee - ₹"],
+              }}
+              name="currency"
+              finalData={finalData}
+              setFinalData={setFinalData}
+            />
+
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold">Items</h2>
+                <button
+                  onClick={addItem}
+                  className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Item
+                </button>
+              </div>
+
+              {finalData.items.length > 0 && (
+                <div className="border rounded-lg p-4 space-y-4">
+                  <div className="grid grid-cols-12 gap-4 font-semibold">
+                    <div className="col-span-4">Description</div>
+                    <div className="col-span-2">Item Price</div>
+                    <div className="col-span-2">Quantity</div>
+                    <div className="col-span-2">Total</div>
+                    <div className="col-span-2">Action</div>
+                  </div>
+
+                  {finalData.items.map((item, index) => (
+                    <div
+                      key={index}
+                      className="grid grid-cols-12 gap-4 items-center"
+                    >
+                      <div className="col-span-4">
+                        <input
+                          type="text"
+                          value={item.description}
+                          onChange={(e) =>
+                            updateItem(index, "description", e.target.value)
+                          }
+                          placeholder="Enter description"
+                          className="w-full p-2 border rounded-md"
+                        />
+                      </div>
+                      <div className="col-span-2">
+                        <input
+                          type="number"
+                          value={item.price}
+                          onChange={(e) =>
+                            updateItem(index, "price", e.target.value)
+                          }
+                          placeholder="Price"
+                          className="w-full p-2 border rounded-md"
+                        />
+                      </div>
+                      <div className="col-span-2">
+                        <input
+                          type="number"
+                          value={item.quantity}
+                          onChange={(e) =>
+                            updateItem(index, "quantity", e.target.value)
+                          }
+                          min="1"
+                          className="w-full p-2 border rounded-md"
+                        />
+                      </div>
+                      <div className="col-span-2">
+                        <input
+                          type="number"
+                          value={item.total}
+                          readOnly
+                          className="w-full p-2 border rounded-md bg-gray-50"
+                        />
+                      </div>
+                      <div className="col-span-2">
+                        <button
+                          onClick={() => removeItem(index)}
+                          className="p-2 text-red-500 hover:text-red-700"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <ListSelect
+              title="Payment Method"
+              data={{
+                heading: "Select Payment Method",
+                data: ["Cash", "Card", "UPI", "Net Banking"],
+              }}
+              name="payment_method"
+              finalData={finalData}
+              setFinalData={setFinalData}
+            />
+
+            <TextInput
+              title="Tax %"
+              placeholder="Tax Amount"
+              type="number"
+              finalData={finalData}
+              setFinalData={setFinalData}
+              name="tax_percentage"
+            />
+
+            <TextInput
+              title="None GST NO."
+              placeholder=""
+              finalData={finalData}
+              setFinalData={setFinalData}
+              name="gst_no"
+            />
+
+            <TextInput
+              title="Remark"
+              placeholder="Remark..."
+              finalData={finalData}
+              setFinalData={setFinalData}
+              name="remark"
+            />
+
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="terms"
+                checked={finalData.terms_accepted}
+                onChange={(e) =>
+                  setFinalData({
+                    ...finalData,
+                    terms_accepted: e.target.checked,
+                  })
+                }
+                className="h-4 w-4 rounded border-gray-300"
+              />
+              <label htmlFor="terms" className="text-sm text-gray-600">
+                I have read the terms and conditions.
+              </label>
+            </div>
+          </BillEditContainer>
         </div>
 
-        {/* Preview Section - Positioned in right side corner on large screens */}
-        <div className="w-full lg:w-1/4 lg:sticky lg:top-4">
-          <BillViewContainer>
-            <StationaryInvoicePreview data={finalData} />
-          </BillViewContainer>
+        {/* Preview */}
+        <div className="sticky top-4">
+          <StationaryPreview data={finalData} />
         </div>
       </div>
     </BillContainer>

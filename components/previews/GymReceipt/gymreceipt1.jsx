@@ -6,7 +6,9 @@ const nunito_sans = Nunito_Sans({ weight: ["400"], subsets: ["latin"] });
 
 export default function GymReceipt1({ data }) {
   function formatDate(dateString) {
-    if (dateString) {
+    if (!dateString) return "";
+
+    try {
       const monthNames = [
         "January",
         "February",
@@ -22,13 +24,19 @@ export default function GymReceipt1({ data }) {
         "December",
       ];
       const parts = dateString.split("-");
+      if (parts.length !== 3) return dateString;
+
       const day = Number.parseInt(parts[0], 10);
       const month = Number.parseInt(parts[1], 10) - 1;
       const year = Number.parseInt(parts[2], 10);
-      const date = new Date(year, month, day);
+
+      if (isNaN(day) || isNaN(month) || isNaN(year)) return dateString;
+      if (month < 0 || month > 11) return dateString;
+
       return `${day} ${monthNames[month]} ${year}`;
+    } catch (error) {
+      return dateString;
     }
-    return "";
   }
 
   const calculateSubTotal = () => {
@@ -49,8 +57,7 @@ export default function GymReceipt1({ data }) {
 
   return (
     <div id="doc" className="w-full sticky max-w-[600px] bg-white mx-auto p-8">
-      <div className={`${nunito_sans.className} container`}>
-        {/* Header with Logo */}
+      <div className="mb-6">
         <div className="flex justify-between items-center mb-6">
           {data.logo_url && (
             <div className="w-24 h-24 relative">
@@ -63,89 +70,106 @@ export default function GymReceipt1({ data }) {
             </div>
           )}
           <div className="text-right">
-            <h1 className="text-2xl font-bold">{data.gym_name}</h1>
+            <h1 className="text-2xl font-bold">
+              {data.gym_name || "Gym Name"}
+            </h1>
             <p className="text-gray-600">{data.gym_address}</p>
             <p className="text-gray-600">Phone: {data.gym_phone}</p>
             <p className="text-gray-600">Email: {data.gym_email}</p>
           </div>
         </div>
+      </div>
 
-        <h2 className="text-center text-xl font-bold mb-6">Gym Invoice</h2>
-
-        {/* Invoice Details */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <div>
-            <p className="font-bold">Invoice Number: {data.invoice_number}</p>
-            <p>User No: {data.user_no}</p>
-            <p>Invoice Date: {formatDate(data.invoice_date)}</p>
-          </div>
-          <div className="text-right">
-            <p>GST No: {data.gst_no || "N/A"}</p>
-            <p>Billing Cycle: {data.billing_cycle}</p>
-            <p>Currency: {data.currency}</p>
-          </div>
-        </div>
-
-        {/* Customer Details */}
-        <div className="border-t border-b border-gray-200 py-4 mb-6">
-          <h3 className="font-bold mb-2">Customer Details</h3>
+      <div className={`${nunito_sans.className} p-8`}>
+        <div className="border border-gray-200 rounded-lg p-6 shadow-sm mb-6">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p>Name: {data.customer_name}</p>
-              <p>Address: {data.customer_address}</p>
-              <p>Phone: {data.customer_phone}</p>
+              <p className="font-bold">Invoice Number: {data.invoice_number}</p>
+              <p>User No: {data.user_no}</p>
+              <p>Invoice Date: {formatDate(data.invoice_date)}</p>
             </div>
             <div className="text-right">
-              <p>From: {formatDate(data.bill_from_date)}</p>
-              <p>To: {formatDate(data.bill_to_date)}</p>
-              <p>Payment Method: {data.payment_method}</p>
+              <p>GST No: {data.gst_no || "N/A"}</p>
+              <p>Billing Cycle: {data.billing_cycle}</p>
+              <p>Currency: {data.currency}</p>
             </div>
           </div>
         </div>
 
-        {/* Item Details Table */}
-        {data.item_details.length > 0 && (
-          <div className="mb-6">
-            <h3 className="font-bold mb-2">Item Details</h3>
-            <div className="border rounded-lg overflow-hidden">
-              <table className="w-full">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-4 py-2 text-left">Description</th>
-                    <th className="px-4 py-2 text-right">Price</th>
-                    <th className="px-4 py-2 text-right">Qty</th>
-                    <th className="px-4 py-2 text-right">Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.item_details.map((item, index) => (
-                    <tr key={index} className="border-t">
-                      <td className="px-4 py-2">{item.description}</td>
-                      <td className="px-4 py-2 text-right">
-                        {data.currency.split(" - ")[1]} {item.price}
-                      </td>
-                      <td className="px-4 py-2 text-right">{item.quantity}</td>
-                      <td className="px-4 py-2 text-right">
-                        {data.currency.split(" - ")[1]} {item.total}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+        <div className="border border-gray-200 rounded-lg p-6 mb-6">
+          <h3 className="font-bold mb-4">Customer Details</h3>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <p className="mb-2">
+                <span className="font-semibold">Name:</span>{" "}
+                {data.customer_name}
+              </p>
+              <p className="mb-2">
+                <span className="font-semibold">Address:</span>{" "}
+                {data.customer_address}
+              </p>
+              <p>
+                <span className="font-semibold">Phone:</span>{" "}
+                {data.customer_phone}
+              </p>
             </div>
+            <div className="text-right">
+              <p className="mb-2">
+                <span className="font-semibold">From:</span>{" "}
+                {formatDate(data.bill_from_date)}
+              </p>
+              <p className="mb-2">
+                <span className="font-semibold">To:</span>{" "}
+                {formatDate(data.bill_to_date)}
+              </p>
+              <p>
+                <span className="font-semibold">Payment:</span>{" "}
+                {data.payment_method}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {data.item_details.length > 0 && (
+          <div className="border rounded-lg overflow-hidden mb-6">
+            <table className="w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-4 py-3 text-left">Description</th>
+                  <th className="px-4 py-3 text-right">Price</th>
+                  <th className="px-4 py-3 text-right">Qty</th>
+                  <th className="px-4 py-3 text-right">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.item_details.map((item, index) => (
+                  <tr key={index} className="border-t">
+                    <td className="px-4 py-3">{item.description}</td>
+                    <td className="px-4 py-3 text-right">
+                      {data.currency.split(" - ")[1]} {item.price}
+                    </td>
+                    <td className="px-4 py-3 text-right">{item.quantity}</td>
+                    <td className="px-4 py-3 text-right">
+                      {data.currency.split(" - ")[1]} {item.total}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
 
-        {/* Amount Details */}
-        <div className="mb-6">
+        <div className="border border-gray-200 rounded-lg p-6 mb-6">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="font-bold">Sub Total:</p>
+              <p className="font-bold">Amount Details</p>
+              <p className="mt-2">Sub Total:</p>
               <p>Tax ({data.tax}%):</p>
               <p className="font-bold mt-2">Total Amount:</p>
             </div>
             <div className="text-right">
-              <p className="font-bold">
+              <p className="invisible">Amount Details</p>
+              <p className="mt-2">
                 {data.currency.split(" - ")[1]} {subTotal.toFixed(2)}
               </p>
               <p>
@@ -158,16 +182,14 @@ export default function GymReceipt1({ data }) {
           </div>
         </div>
 
-        {/* Remarks */}
         {data.remark && (
-          <div className="mb-6">
+          <div className="border border-gray-200 rounded-lg p-4 mb-6">
             <h3 className="font-bold mb-2">Remarks</h3>
             <p className="text-gray-600">{data.remark}</p>
           </div>
         )}
 
-        {/* Signature */}
-        <div className="mt-8 flex justify-end">
+        <div className="flex justify-end mt-8">
           {data.signature_url && (
             <div className="text-center">
               <div className="w-32 h-16 relative mb-2">
@@ -178,15 +200,14 @@ export default function GymReceipt1({ data }) {
                   objectFit="contain"
                 />
               </div>
-              <p className="text-sm">Authorized Signature</p>
+              <p className="text-sm text-gray-600">Authorized Signature</p>
             </div>
           )}
         </div>
 
-        {/* Terms and Conditions */}
-        <div className="mt-8 text-sm text-gray-600">
+        <div className="mt-8 border border-gray-200 rounded-lg p-4">
           <h3 className="font-bold mb-2">Terms & Conditions</h3>
-          <ul className="list-disc list-inside space-y-1">
+          <ul className="list-disc list-inside space-y-1 text-sm text-gray-600">
             <li>Membership fees are non-refundable and non-transferable.</li>
             <li>
               Access to the gym is restricted to the membership period only.
